@@ -72,14 +72,13 @@ describe("app()", () => {
       return request(app).get("/api/articles/1").expect(200);
     });
 
-    test.only("GET 200: /api/articles/:article_id should return an article object with all required properties ", () => {
+    test("GET 200: /api/articles/:article_id should return an article object with all required properties ", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
         .then((data) => {
           const { body } = data;
           const article = body.articles;
-          console.log(article);
           expect(article).toHaveProperty("author", expect.any(String));
           expect(article).toHaveProperty("title", expect.any(String));
           expect(article).toHaveProperty("article_id", expect.any(Number));

@@ -8,7 +8,6 @@ const fetchArticle = (article_id) => {
       [article_id]
     )
     .then((articles) => {
-      console.log(articles);
       if (articles.rows.length === 0) {
         return Promise.reject({
           status: 404,
