@@ -8,7 +8,15 @@ const fetchArticle = (article_id) => {
       [article_id]
     )
     .then((articles) => {
-      return articles.rows[0];
+      console.log(articles);
+      if (articles.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `Not found`,
+        });
+      } else {
+        return articles.rows[0];
+      }
     });
 };
 

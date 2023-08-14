@@ -39,7 +39,7 @@ describe("app()", () => {
         .get("/api/topicsa")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("page not found");
+          expect(body.msg).toEqual("Not found");
         });
     });
   });
@@ -63,7 +63,7 @@ describe("app()", () => {
         .get("/apio/")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("page not found");
+          expect(body.msg).toBe("Not found");
         });
     });
   });
@@ -72,14 +72,14 @@ describe("app()", () => {
       return request(app).get("/api/articles/1").expect(200);
     });
 
-    test("GET 200: /api/articles/:article_id should return an article object with all required properties ", () => {
+    test.only("GET 200: /api/articles/:article_id should return an article object with all required properties ", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
         .then((data) => {
           const { body } = data;
           const article = body.articles;
-          console.log(data);
+          console.log(article);
           expect(article).toHaveProperty("author", expect.any(String));
           expect(article).toHaveProperty("title", expect.any(String));
           expect(article).toHaveProperty("article_id", expect.any(Number));
@@ -88,6 +88,24 @@ describe("app()", () => {
           expect(article).toHaveProperty("created_at", expect.any(String));
           expect(article).toHaveProperty("votes", expect.any(Number));
           expect(article).toHaveProperty("article_img_url", expect.any(String));
+        });
+    });
+
+    test("GET 404: /api/articles/:article_id should return a 404 message when there is not a matching request ", () => {
+      return request(app)
+        .get("/api/articles/999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+
+    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made  ", () => {
+      return request(app)
+        .get("/api/articles/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
         });
     });
   });
