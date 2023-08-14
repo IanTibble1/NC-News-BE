@@ -67,4 +67,9 @@ describe("app()", () => {
         });
     });
   });
+  describe("/api/articles/:article_id", () => {
+    test("GET 200: /api/articles/:article_id returns a 200 status ", () => {
+      return request(app).get("/api/articles/1").expect(200);
+    });
+  });
 });
