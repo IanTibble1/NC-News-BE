@@ -38,6 +38,7 @@ describe("app()", () => {
           expect(topic).toHaveProperty("description", expect.any(String));
           expect(topic).toHaveProperty("slug", expect.any(String));
         });
+        expect(topics).toHaveLength(3);
       });
   });
 });
