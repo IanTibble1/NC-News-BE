@@ -5,14 +5,16 @@ const { getTopics } = require("./controllers/topic-controllers");
 const {
   getArticle,
   getAllArticles,
+  getArticleComments,
 } = require("./controllers/article-controllers");
 app.get("/api/", getApi);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticle);
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.use((request, response, next) => {
-  response.status(404).send({ msg: "Not found" });
+  response.status(404).send({ msg: "No path found" });
   next();
 });
 

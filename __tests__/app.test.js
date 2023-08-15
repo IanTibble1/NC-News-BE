@@ -22,7 +22,7 @@ describe("app()", () => {
         .expect(404)
         .then(({ body }) => {
           const { msg } = body;
-          expect(msg).toBe("Not found");
+          expect(msg).toBe("No path found");
         });
     });
   });
@@ -114,22 +114,19 @@ describe("app()", () => {
     test("GET 200: /api/articles should return all articles as an object with appropriate properties ", () => {
       return request(app)
         .get("/api/articles")
-        .expect(200)
         .then((data) => {
           const { body } = data;
           const articles = body.articles.rows;
-          articles.forEach((article) => {
-            expect(article).toHaveProperty("author", expect.any(String));
-            expect(article).toHaveProperty("title", expect.any(String));
-            expect(article).toHaveProperty("article_id", expect.any(Number));
-            expect(article).toHaveProperty("topic", expect.any(String));
-            expect(article).toHaveProperty("created_at", expect.any(String));
-            expect(article).toHaveProperty("votes", expect.any(Number));
-            expect(article).toHaveProperty(
-              "article_img_url",
-              expect.any(String)
-            );
-            expect(article).toHaveProperty("comment_count", expect.any(String));
+          expect(articles[0]).toMatchObject({
+            author: "icellusedkars",
+            title: "Eight pug gifs that remind me of mitch",
+            article_id: 3,
+            topic: "mitch",
+            created_at: "2020-11-03T09:12:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 2,
           });
         });
     });
@@ -137,11 +134,62 @@ describe("app()", () => {
     test("GET 200: /api/articles should be sorted in descending order by date ", () => {
       return request(app)
         .get("/api/articles")
-        .expect(200)
         .then((data) => {
           const { body } = data;
           const articles = body.articles.rows;
           expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+
+  describe("/api/articles/:article_id/comments", () => {
+    test("GET 200: /api/articles/:article_id/comments returns a 200 status", () => {
+      return request(app).get("/api/articles/1/comments").expect(200);
+    });
+
+    test("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
+      return request(app)
+        .get("/api/articles/6/comments")
+        .then((data) => {
+          const { body } = data;
+          const comments = body.comments.rows;
+          expect(comments).toMatchObject([
+            {
+              comment_id: 16,
+              votes: 1,
+              created_at: "2020-10-11T15:23:00.000Z",
+              author: "butter_bridge",
+              body: "This is a bad article name",
+              article_id: 6,
+            },
+          ]);
+        });
+    });
+
+    test("GET 200: /api/articles/:article_id/comments should return an empty array if article is valid but has no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .then((data) => {
+          const { body } = data;
+          const comments = body.comments.rows;
+          expect(comments).toEqual([]);
+        });
+    });
+    test("GET 404: /api/articles/:article_id/comments should return a 404 message when there is not a matching request ", () => {
+      return request(app)
+        .get("/api/articles/999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+
+    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made  ", () => {
+      return request(app)
+        .get("/api/articles/hello/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
         });
     });
   });
