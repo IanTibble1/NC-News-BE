@@ -141,4 +141,30 @@ describe("app()", () => {
         });
     });
   });
+
+  describe("/api/articles/:article_id/comments", () => {
+    test("GET 200: /api/articles/:article_id/comments returns a 200 status", () => {
+      return request(app).get("/api/articles/1/comments").expect(200);
+    });
+
+    test("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
+      return request(app)
+        .get("/api/articles/6/comments")
+        .then((data) => {
+          const { body } = data;
+          const comments = body.comments.rows;
+          console.log(comments);
+          expect(comments).toMatchObject([
+            {
+              comment_id: 16,
+              votes: 1,
+              created_at: "2020-10-11T15:23:00.000Z",
+              author: "butter_bridge",
+              body: "This is a bad article name",
+              article_id: 6,
+            },
+          ]);
+        });
+    });
+  });
 });
