@@ -26,7 +26,7 @@ describe("app()", () => {
         });
     });
   });
-  describe("/api/topics", () => {
+  describe("GET /api/topics", () => {
     test("GET 200: /api/topics returns a 200 status ", () => {
       return request(app).get("/api/topics").expect(200);
     });
@@ -47,7 +47,7 @@ describe("app()", () => {
     });
   });
 
-  describe("/api/", () => {
+  describe("GET /api/", () => {
     test("GET 200: /api/ should return a 200 status", () => {
       return request(app).get("/api/").expect(200);
     });
@@ -61,7 +61,7 @@ describe("app()", () => {
         });
     });
   });
-  describe("/api/articles/:article_id", () => {
+  describe("GET /api/articles/:article_id", () => {
     test("GET 200: /api/articles/:article_id returns a 200 status ", () => {
       return request(app).get("/api/articles/1").expect(200);
     });
@@ -106,7 +106,7 @@ describe("app()", () => {
     });
   });
 
-  describe("/api/articles", () => {
+  describe("GET /api/articles", () => {
     test("GET 200: /api/articles should return a 200 status ", () => {
       return request(app).get("/api/articles").expect(200);
     });
@@ -142,7 +142,7 @@ describe("app()", () => {
     });
   });
 
-  describe("/api/articles/:article_id/comments", () => {
+  describe(" GET /api/articles/:article_id/comments", () => {
     test("GET 200: /api/articles/:article_id/comments returns a 200 status", () => {
       return request(app).get("/api/articles/1/comments").expect(200);
     });
@@ -153,7 +153,7 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const comments = body.comments.rows;
-          expect(comments).toMatchObject([
+          expect(comments).toEqual([
             {
               comment_id: 16,
               votes: 1,
@@ -163,6 +163,16 @@ describe("app()", () => {
               article_id: 6,
             },
           ]);
+        });
+    });
+
+    test("GET 200: /api/articles/:article/comments should be sorted in order of most recent ", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .then((data) => {
+          const { body } = data;
+          const comments = body.comments.rows;
+          expect(comments).toBeSortedBy("created_at", { descending: true });
         });
     });
 
@@ -190,6 +200,33 @@ describe("app()", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("bad request");
+        });
+    });
+  });
+
+  describe(" POST /api/articles/:article_id/comments", () => {
+    test("POST 201: should return a 201 status code", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(201)
+        .then((data) => {
+          console.log(data, "1");
+          const { body } = data;
+          const comment = body.comments;
+
+          expect(comment).toMatchObject({
+            comment_id: 19,
+            body: "I love this article",
+            article_id: 3,
+            author: "butter_bridge",
+            votes: 0,
+            created_at: expect.any(String),
+          });
         });
     });
   });

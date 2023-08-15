@@ -4,6 +4,7 @@ const {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
+  addComment,
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
@@ -45,4 +46,22 @@ const getArticleComments = (request, response, next) => {
     });
 };
 
-module.exports = { getArticle, getAllArticles, getArticleComments };
+const postComment = (request, response, next) => {
+  const { body } = request.body;
+  const { username } = request.body;
+  const { article_id } = request.params;
+  addComment(article_id, username, body)
+    .then((comments) => {
+      response.status(201).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = {
+  getArticle,
+  getAllArticles,
+  getArticleComments,
+  postComment,
+};
