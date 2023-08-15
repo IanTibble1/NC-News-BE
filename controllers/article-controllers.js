@@ -9,8 +9,8 @@ const getAllArticles = (request, response, next) => {
 const getArticle = (request, response, next) => {
   const { article_id } = request.params;
   fetchArticle(article_id)
-    .then((article) => {
-      response.status(200).send({ articles: article });
+    .then((articles) => {
+      response.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);

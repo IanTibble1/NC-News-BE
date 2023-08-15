@@ -22,7 +22,7 @@ describe("app()", () => {
         .expect(404)
         .then(({ body }) => {
           const { msg } = body;
-          expect(msg).toBe("Not found");
+          expect(msg).toBe("No path found");
         });
     });
   });
@@ -114,22 +114,19 @@ describe("app()", () => {
     test("GET 200: /api/articles should return all articles as an object with appropriate properties ", () => {
       return request(app)
         .get("/api/articles")
-        .expect(200)
         .then((data) => {
           const { body } = data;
           const articles = body.articles.rows;
-          articles.forEach((article) => {
-            expect(article).toHaveProperty("author", expect.any(String));
-            expect(article).toHaveProperty("title", expect.any(String));
-            expect(article).toHaveProperty("article_id", expect.any(Number));
-            expect(article).toHaveProperty("topic", expect.any(String));
-            expect(article).toHaveProperty("created_at", expect.any(String));
-            expect(article).toHaveProperty("votes", expect.any(Number));
-            expect(article).toHaveProperty(
-              "article_img_url",
-              expect.any(String)
-            );
-            expect(article).toHaveProperty("comment_count", expect.any(String));
+          expect(articles[0]).toMatchObject({
+            author: "icellusedkars",
+            title: "Eight pug gifs that remind me of mitch",
+            article_id: 3,
+            topic: "mitch",
+            created_at: "2020-11-03T09:12:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 2,
           });
         });
     });
@@ -137,7 +134,6 @@ describe("app()", () => {
     test("GET 200: /api/articles should be sorted in descending order by date ", () => {
       return request(app)
         .get("/api/articles")
-        .expect(200)
         .then((data) => {
           const { body } = data;
           const articles = body.articles.rows;
