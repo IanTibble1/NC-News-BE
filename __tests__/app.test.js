@@ -4,6 +4,7 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const apiList = require("../endpoints.json");
+const articles = require("../db/data/test-data/articles");
 
 afterAll(() => {
   return db.end();
@@ -14,6 +15,17 @@ beforeAll(() => {
 });
 
 describe("app()", () => {
+  describe("ALL if endpoint does not exist", () => {
+    test("404: should return a 404 status with the message, not found if endpoint does not exist ", () => {
+      return request(app)
+        .get("/api/doesnt-exist")
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Not found");
+        });
+    });
+  });
   describe("/api/topics", () => {
     test("GET 200: /api/topics returns a 200 status ", () => {
       return request(app).get("/api/topics").expect(200);
@@ -33,15 +45,6 @@ describe("app()", () => {
           expect(topics).toHaveLength(3);
         });
     });
-
-    test("GET 404: /api/topics returns a 404 message when there is an error in the request ", () => {
-      return request(app)
-        .get("/api/topicsa")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toEqual("Not found");
-        });
-    });
   });
 
   describe("/api/", () => {
@@ -57,15 +60,6 @@ describe("app()", () => {
           expect(body).toEqual(apiList);
         });
     });
-
-    test("GET 404: /api/ should return a 404 message when there is an error in the request ", () => {
-      return request(app)
-        .get("/apio/")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
-        });
-    });
   });
   describe("/api/articles/:article_id", () => {
     test("GET 200: /api/articles/:article_id returns a 200 status ", () => {
@@ -79,14 +73,17 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const article = body.articles;
-          expect(article).toHaveProperty("author", expect.any(String));
-          expect(article).toHaveProperty("title", expect.any(String));
-          expect(article).toHaveProperty("article_id", expect.any(Number));
-          expect(article).toHaveProperty("body", expect.any(String));
-          expect(article).toHaveProperty("topic", expect.any(String));
-          expect(article).toHaveProperty("created_at", expect.any(String));
-          expect(article).toHaveProperty("votes", expect.any(Number));
-          expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).toMatchObject({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
         });
     });
 
@@ -105,6 +102,46 @@ describe("app()", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("bad request");
+        });
+    });
+  });
+
+  describe("/api/articles", () => {
+    test("GET 200: /api/articles should return a 200 status ", () => {
+      return request(app).get("/api/articles").expect(200);
+    });
+
+    test("GET 200: /api/articles should return all articles as an object with appropriate properties ", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const articles = body.articles.rows;
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("author", expect.any(String));
+            expect(article).toHaveProperty("title", expect.any(String));
+            expect(article).toHaveProperty("article_id", expect.any(Number));
+            expect(article).toHaveProperty("topic", expect.any(String));
+            expect(article).toHaveProperty("created_at", expect.any(String));
+            expect(article).toHaveProperty("votes", expect.any(Number));
+            expect(article).toHaveProperty(
+              "article_img_url",
+              expect.any(String)
+            );
+            expect(article).toHaveProperty("comment_count", expect.any(String));
+          });
+        });
+    });
+
+    test("GET 200: /api/articles should be sorted in descending order by date ", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const articles = body.articles.rows;
+          expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
   });

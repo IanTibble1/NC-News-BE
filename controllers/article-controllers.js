@@ -1,4 +1,10 @@
-const { fetchArticle } = require("../models/article-models");
+const { fetchArticle, fetchAllArticles } = require("../models/article-models");
+
+const getAllArticles = (request, response, next) => {
+  fetchAllArticles().then((articles) => {
+    response.status(200).send({ articles: articles });
+  });
+};
 
 const getArticle = (request, response, next) => {
   const { article_id } = request.params;
@@ -11,4 +17,4 @@ const getArticle = (request, response, next) => {
     });
 };
 
-module.exports = { getArticle };
+module.exports = { getArticle, getAllArticles };
