@@ -153,7 +153,6 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const comments = body.comments.rows;
-          console.log(comments);
           expect(comments).toMatchObject([
             {
               comment_id: 16,
@@ -164,6 +163,33 @@ describe("app()", () => {
               article_id: 6,
             },
           ]);
+        });
+    });
+
+    test("GET 200: /api/articles/:article_id/comments should return an empty array if article is valid but has no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .then((data) => {
+          const { body } = data;
+          const comments = body.comments.rows;
+          expect(comments).toEqual([]);
+        });
+    });
+    test("GET 404: /api/articles/:article_id/comments should return a 404 message when there is not a matching request ", () => {
+      return request(app)
+        .get("/api/articles/999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+
+    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made  ", () => {
+      return request(app)
+        .get("/api/articles/hello/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
         });
     });
   });
