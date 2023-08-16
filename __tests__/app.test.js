@@ -310,7 +310,7 @@ describe("app()", () => {
   });
 
   describe("PATCH /api/articles/:article_id", () => {
-    test("PATCH 200: /api/articles/:article_id should update the vote count of an article via its article_id", () => {
+    test("PATCH 200: /api/articles/:article_id should increase the vote count of an article via its article_id", () => {
       const changeVotes = { inc_vote: 1 };
       return request(app)
         .patch("/api/articles/1")
@@ -318,12 +318,37 @@ describe("app()", () => {
         .send(changeVotes)
         .then((data) => {
           const { body } = data;
-
-          console.log(body, "body");
           const article = body.updatedArticle;
-          console.log(article, "article");
           expect(article).toHaveProperty("votes");
           expect(article.votes).toBe(101);
+        });
+    });
+
+    test("PATCH 200: /api/articles/:article_id should reduce the vote count if negative number used", () => {
+      const changeVotes = { inc_vote: -10 };
+      return request(app)
+        .patch("/api/articles/1")
+        .expect(200)
+        .send(changeVotes)
+        .then((data) => {
+          const { body } = data;
+          const article = body.updatedArticle;
+          expect(article).toHaveProperty("votes");
+          expect(article.votes).toBe(91);
+        });
+    });
+
+    test("PATCH 200: /api/articles/:article_id should not reduce the vote count below 0", () => {
+      const changeVotes = { inc_vote: -200 };
+      return request(app)
+        .patch("/api/articles/1")
+        .expect(200)
+        .send(changeVotes)
+        .then((data) => {
+          const { body } = data;
+          const article = body.updatedArticle;
+          expect(article).toHaveProperty("votes");
+          expect(article.votes).toBe(0);
         });
     });
   });

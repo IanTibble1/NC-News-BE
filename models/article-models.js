@@ -56,10 +56,12 @@ const updateVotes = (article_id, inc_vote) => {
   return db
     .query(
       `UPDATE articles
-  SET votes = votes + $1
+  SET votes = CASE WHEN (votes + $1) < 0 THEN 0
+  ELSE votes + $1
+  END
   WHERE article_id = $2
   RETURNING *;`,
-      [article_id, inc_vote]
+      [inc_vote, article_id]
     )
     .then((updatedArticle) => {
       return updatedArticle.rows[0];
