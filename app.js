@@ -6,12 +6,16 @@ const {
   getArticle,
   getAllArticles,
   getArticleComments,
+  patchArticle,
 } = require("./controllers/article-controllers");
+
+app.use(express.json());
 app.get("/api/", getApi);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticle);
 app.get("/api/articles/:article_id/comments", getArticleComments);
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.use((request, response, next) => {
   response.status(404).send({ msg: "No path found" });

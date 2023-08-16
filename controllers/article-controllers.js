@@ -45,4 +45,13 @@ const getArticleComments = (request, response, next) => {
     });
 };
 
-module.exports = { getArticle, getAllArticles, getArticleComments };
+const patchArticle = (request, response, next) => {
+  response.status(200).send();
+};
+
+module.exports = {
+  getArticle,
+  getAllArticles,
+  getArticleComments,
+  patchArticle,
+};
