@@ -319,8 +319,17 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const article = body.updatedArticle;
-          expect(article).toHaveProperty("votes");
-          expect(article.votes).toBe(101);
+          expect(article).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 101,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
         });
     });
 
@@ -333,8 +342,17 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const article = body.updatedArticle;
-          expect(article).toHaveProperty("votes");
-          expect(article.votes).toBe(91);
+          expect(article).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 91,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
         });
     });
 
@@ -347,8 +365,49 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const article = body.updatedArticle;
-          expect(article).toHaveProperty("votes");
-          expect(article.votes).toBe(0);
+          expect(article).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
+        });
+    });
+
+    test("PATCH 404: /api/articles/:article_id should return 404 not found if no matching article_id ", () => {
+      const changeVotes = { inc_vote: 1 };
+      return request(app)
+        .patch("/api/articles/999")
+        .expect(404)
+        .send(changeVotes)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+
+    test("PATCH 400: /api/articles/:article_id should return 400 required field missing if inc_vote missing ", () => {
+      return request(app)
+        .patch("/api/articles/999")
+        .expect(400)
+        .send({})
+        .then(({ body }) => {
+          expect(body.msg).toBe("required field missing");
+        });
+    });
+
+    test("PATCH 400: /api/articles/:article_id should return 400 votes should be a number if inc_vote missing ", () => {
+      const changeVotes = { inc_vote: "1" };
+      return request(app)
+        .patch("/api/articles/1")
+        .expect(400)
+        .send(changeVotes)
+        .then(({ body }) => {
+          expect(body.msg).toBe("votes should be a number");
         });
     });
   });
