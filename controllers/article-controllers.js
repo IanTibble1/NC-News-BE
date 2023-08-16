@@ -1,4 +1,7 @@
-const { checkIdExists } = require("../models/article-id-models");
+const {
+  checkIdExists,
+  checkUserNameExist,
+} = require("../models/article-parameters-exists-models");
 
 const {
   fetchArticle,
@@ -19,7 +22,11 @@ const getAllArticles = (request, response, next) => {
 
 const getArticle = (request, response, next) => {
   const { article_id } = request.params;
-  fetchArticle(article_id)
+
+  checkIdExists(article_id)
+    .then(() => {
+      return fetchArticle(article_id);
+    })
     .then((article) => {
       response.status(200).send({ articles: article });
     })
@@ -54,7 +61,7 @@ const postComment = (request, response, next) => {
     response.status(400).send({ msg: "missing required field" });
   }
 
-  checkIdExists(article_id)
+  Promise.all([checkIdExists(article_id), checkUserNameExist(username)])
     .then(() => {
       return addComment(username, body, article_id);
     })

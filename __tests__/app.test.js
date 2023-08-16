@@ -96,7 +96,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made", () => {
+    test("GET 400: /api/articles/:article_id should return a 400 message if id wrong data type", () => {
       return request(app)
         .get("/api/articles/hello")
         .expect(400)
@@ -194,7 +194,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made", () => {
+    test("GET 400: /api/articles/:article_id should return a 400 message if id wrong datatype", () => {
       return request(app)
         .get("/api/articles/hello/comments")
         .expect(400)
@@ -228,6 +228,31 @@ describe("app()", () => {
         });
     });
 
+    test("POST 201: /api/articles/:article_id/comments should return a 201 status code with additional request properties ignored", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+        extraProperty: "to be ignored",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(201)
+        .then((data) => {
+          const { body } = data;
+          const comment = body.comments;
+          expect(comment).toMatchObject({
+            comment_id: 20,
+            body: "I love this article",
+            article_id: 3,
+            author: "butter_bridge",
+            votes: 0,
+            created_at: expect.any(String),
+          });
+          expect(comment).not.toHaveProperty("extraProperty");
+        });
+    });
+
     test("POST 400: /api/articles/:article_id/comments should return a 400 status code 'missing required field' if missing required fields", () => {
       const newComment = {
         body: "I love this article",
@@ -241,7 +266,7 @@ describe("app()", () => {
         });
     });
 
-    test("POST 400: /api/articles/:article_id/comments should return a 400 'bad request' if bad request made", () => {
+    test("POST 400: /api/articles/:article_id/comments should return a 400 'bad request' if id wrong datatype", () => {
       const newComment = {
         username: "butter_bridge",
         body: "I love this article",
@@ -252,6 +277,20 @@ describe("app()", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("bad request");
+        });
+    });
+
+    test("POST 404: /api/articles/:article_id/comments should return a 404 'Not found' if username does not exist", () => {
+      const newComment = {
+        username: "doesnt_exist",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
         });
     });
 
