@@ -308,4 +308,23 @@ describe("app()", () => {
         });
     });
   });
+
+  describe("PATCH /api/articles/:article_id", () => {
+    test("PATCH 200: /api/articles/:article_id should update the vote count of an article via its article_id", () => {
+      const changeVotes = { inc_vote: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .expect(200)
+        .send(changeVotes)
+        .then((data) => {
+          const { body } = data;
+
+          console.log(body, "body");
+          const article = body.updatedArticle;
+          console.log(article, "article");
+          expect(article).toHaveProperty("votes");
+          expect(article.votes).toBe(101);
+        });
+    });
+  });
 });

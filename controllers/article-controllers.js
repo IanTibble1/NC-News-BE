@@ -8,6 +8,7 @@ const {
   fetchAllArticles,
   fetchArticleComments,
   addComment,
+  updateVotes,
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
@@ -73,9 +74,21 @@ const postComment = (request, response, next) => {
     });
 };
 
+const updateArticle = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_vote } = request.body;
+
+  checkIdExists(article_id).then(() => {
+    updateVotes(article_id, inc_vote).then((updatedArticle) => {
+      response.status(200).send({ updatedArticle });
+    });
+  });
+};
+
 module.exports = {
   getArticle,
   getAllArticles,
   getArticleComments,
   postComment,
+  updateArticle,
 };

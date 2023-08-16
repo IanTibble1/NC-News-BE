@@ -52,9 +52,24 @@ const addComment = (username, commentBody, article_id) => {
     });
 };
 
+const updateVotes = (article_id, inc_vote) => {
+  return db
+    .query(
+      `UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING *;`,
+      [article_id, inc_vote]
+    )
+    .then((updatedArticle) => {
+      return updatedArticle.rows[0];
+    });
+};
+
 module.exports = {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
   addComment,
+  updateVotes,
 };
