@@ -50,7 +50,14 @@ const postComment = (request, response, next) => {
   const { body } = request.body;
   const { username } = request.body;
   const { article_id } = request.params;
-  addComment(article_id, username, body)
+  if (body === undefined || username === undefined) {
+    response.status(400).send({ msg: "missing required field" });
+  }
+
+  checkIdExists(article_id)
+    .then(() => {
+      return addComment(username, body, article_id);
+    })
     .then((comments) => {
       response.status(201).send({ comments });
     })

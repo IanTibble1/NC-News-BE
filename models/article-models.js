@@ -40,12 +40,12 @@ const fetchArticleComments = (article_id) => {
   );
 };
 
-const addComment = (article_id, username, commentBody) => {
+const addComment = (username, commentBody, article_id) => {
   return db
     .query(
-      `INSERT INTO comments(article_id, author, body)
+      `INSERT INTO comments(author, body, article_id)
   VALUES ($1, $2, $3) RETURNING *;`,
-      [article_id, username, commentBody]
+      [username, commentBody, article_id]
     )
     .then((comment) => {
       return comment.rows[0];

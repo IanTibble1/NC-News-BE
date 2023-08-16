@@ -16,7 +16,7 @@ beforeAll(() => {
 
 describe("app()", () => {
   describe("ALL if endpoint does not exist", () => {
-    test("404: should return a 404 status with the message, not found if endpoint does not exist ", () => {
+    test("404: should return a 404 status with the message, not found if endpoint does not exist", () => {
       return request(app)
         .get("/api/doesnt-exist")
         .expect(404)
@@ -27,11 +27,11 @@ describe("app()", () => {
     });
   });
   describe("GET /api/topics", () => {
-    test("GET 200: /api/topics returns a 200 status ", () => {
+    test("GET 200: /api/topics returns a 200 status", () => {
       return request(app).get("/api/topics").expect(200);
     });
 
-    test("GET 200: /api/topics should return an array of topic objects which has the slug and description properties ", () => {
+    test("GET 200: /api/topics should return an array of topic objects which has the slug and description properties", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
@@ -62,11 +62,11 @@ describe("app()", () => {
     });
   });
   describe("GET /api/articles/:article_id", () => {
-    test("GET 200: /api/articles/:article_id returns a 200 status ", () => {
+    test("GET 200: /api/articles/:article_id returns a 200 status", () => {
       return request(app).get("/api/articles/1").expect(200);
     });
 
-    test("GET 200: /api/articles/:article_id should return an article object with all required properties ", () => {
+    test("GET 200: /api/articles/:article_id should return an article object with all required properties", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -87,7 +87,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 404: /api/articles/:article_id should return a 404 message when there is not a matching request ", () => {
+    test("GET 404: /api/articles/:article_id should return a 404 message when there is not a matching request", () => {
       return request(app)
         .get("/api/articles/999")
         .expect(404)
@@ -96,7 +96,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made  ", () => {
+    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made", () => {
       return request(app)
         .get("/api/articles/hello")
         .expect(400)
@@ -107,11 +107,11 @@ describe("app()", () => {
   });
 
   describe("GET /api/articles", () => {
-    test("GET 200: /api/articles should return a 200 status ", () => {
+    test("GET 200: /api/articles should return a 200 status", () => {
       return request(app).get("/api/articles").expect(200);
     });
 
-    test("GET 200: /api/articles should return all articles as an object with appropriate properties ", () => {
+    test("GET 200: /api/articles should return all articles as an object with appropriate properties", () => {
       return request(app)
         .get("/api/articles")
         .then((data) => {
@@ -131,7 +131,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 200: /api/articles should be sorted in descending order by date ", () => {
+    test("GET 200: /api/articles should be sorted in descending order by date", () => {
       return request(app)
         .get("/api/articles")
         .then((data) => {
@@ -147,7 +147,7 @@ describe("app()", () => {
       return request(app).get("/api/articles/1/comments").expect(200);
     });
 
-    test("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
+    test("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id", () => {
       return request(app)
         .get("/api/articles/6/comments")
         .then((data) => {
@@ -166,7 +166,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 200: /api/articles/:article/comments should be sorted in order of most recent ", () => {
+    test("GET 200: /api/articles/:article/comments should be sorted in order of most recent", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .then((data) => {
@@ -185,7 +185,7 @@ describe("app()", () => {
           expect(comments).toEqual([]);
         });
     });
-    test("GET 404: /api/articles/:article_id/comments should return a 404 message when there is not a matching request ", () => {
+    test("GET 404: /api/articles/:article_id/comments should return a 404 message when there is not a matching request", () => {
       return request(app)
         .get("/api/articles/999/comments")
         .expect(404)
@@ -194,7 +194,7 @@ describe("app()", () => {
         });
     });
 
-    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made  ", () => {
+    test("GET 400: /api/articles/:article_id should return a 400 message if bad request made", () => {
       return request(app)
         .get("/api/articles/hello/comments")
         .expect(400)
@@ -204,8 +204,8 @@ describe("app()", () => {
     });
   });
 
-  describe(" POST /api/articles/:article_id/comments", () => {
-    test("POST 201: should return a 201 status code", () => {
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("POST 201: /api/articles/:article_id/comments should return a 201 status code", () => {
       const newComment = {
         username: "butter_bridge",
         body: "I love this article",
@@ -215,10 +215,8 @@ describe("app()", () => {
         .send(newComment)
         .expect(201)
         .then((data) => {
-          console.log(data, "1");
           const { body } = data;
           const comment = body.comments;
-
           expect(comment).toMatchObject({
             comment_id: 19,
             body: "I love this article",
@@ -227,6 +225,47 @@ describe("app()", () => {
             votes: 0,
             created_at: expect.any(String),
           });
+        });
+    });
+
+    test("POST 400: /api/articles/:article_id/comments should return a 400 status code 'missing required field' if missing required fields", () => {
+      const newComment = {
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("missing required field");
+        });
+    });
+
+    test("POST 400: /api/articles/:article_id/comments should return a 400 'bad request' if bad request made", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/hello/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+
+    test("POST 404: /api/articles/:article_id/comments should return a 404 'Not found' if no matching id", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
         });
     });
   });
