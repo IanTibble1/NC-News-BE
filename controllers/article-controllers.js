@@ -8,7 +8,7 @@ const {
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
-  const query = request.query.topic;
+  const query = request.query;
 
   fetchAllArticles(query)
     .then((articles) => {

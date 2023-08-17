@@ -478,5 +478,28 @@ describe("app()", () => {
           });
       });
     });
+    describe("GET /api/articles?sort_by", () => {
+      test("GET 200: should return a 200 status and articles sorted by query", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("title", { descending: true });
+          });
+      });
+
+      test("GET 200: sort_by query should work with different columns", () => {
+        return request(app)
+          .get("/api/articles?sort_by=author")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("author", { descending: true });
+          });
+      });
+    });
   });
 });

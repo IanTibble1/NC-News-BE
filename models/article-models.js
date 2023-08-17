@@ -1,7 +1,17 @@
 const db = require("../db/connection");
 
-const fetchAllArticles = (topic) => {
+const fetchAllArticles = ({ topic, sort_by = "created_at" }) => {
   const acceptedTopics = ["mitch", "cats", "paper"];
+  const acceptedSortBy = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
   const queryValues = [];
 
   let baseStr = `SELECT 
@@ -20,8 +30,11 @@ const fetchAllArticles = (topic) => {
     queryValues.push(topic);
   }
 
-  baseStr += ` GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC`;
+  baseStr += ` GROUP BY articles.article_id`;
+
+  if (sort_by) {
+    baseStr += ` ORDER BY ${sort_by} DESC`;
+  }
 
   return db.query(baseStr, queryValues).then(({ rows }) => {
     return rows;
