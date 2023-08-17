@@ -11,7 +11,6 @@ const {
 } = require("./controllers/article-controllers");
 
 app.use(express.json());
-
 app.get("/api/", getApi);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
@@ -42,6 +41,7 @@ app.use((err, request, response, next) => {
 });
 
 app.use((err, request, response, next) => {
+  console.log(err);
   response.status(500).send({ err });
   next(err);
 });

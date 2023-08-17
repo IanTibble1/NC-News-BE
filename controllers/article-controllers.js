@@ -1,7 +1,4 @@
-const {
-  checkIdExists,
-  checkUserNameExist,
-} = require("../models/article-parameters-exists-models");
+const { checkIdExists } = require("../models/article-id-models");
 
 const {
   fetchArticle,
@@ -23,11 +20,7 @@ const getAllArticles = (request, response, next) => {
 
 const getArticle = (request, response, next) => {
   const { article_id } = request.params;
-
-  checkIdExists(article_id)
-    .then(() => {
-      return fetchArticle(article_id);
-    })
+  fetchArticle(article_id)
     .then((article) => {
       response.status(200).send({ articles: article });
     })
