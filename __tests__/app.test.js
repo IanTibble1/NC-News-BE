@@ -500,6 +500,16 @@ describe("app()", () => {
             expect(articles).toBeSortedBy("author", { descending: true });
           });
       });
+
+      test("GET 400: should return a 400 status can't sort by that method if given non valid column", () => {
+        return request(app)
+          .get("/api/articles?sort_by=hello")
+          .expect(400)
+          .then((data) => {
+            const { body } = data;
+            expect(body.msg).toBe("can't sort by that method");
+          });
+      });
     });
   });
 });

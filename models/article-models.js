@@ -32,6 +32,10 @@ const fetchAllArticles = ({ topic, sort_by = "created_at" }) => {
 
   baseStr += ` GROUP BY articles.article_id`;
 
+  if (!acceptedSortBy.includes(sort_by) && sort_by !== undefined) {
+    return Promise.reject({ status: 400, msg: "can't sort by that method" });
+  }
+
   if (sort_by) {
     baseStr += ` ORDER BY ${sort_by} DESC`;
   }
