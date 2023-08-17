@@ -425,4 +425,22 @@ describe("app()", () => {
         });
     });
   });
+
+  describe("GET 200: /api/users should return 200", () => {
+    test("GET 200: /api/users should return a 200 status and an array of user objects with the appropriate properties", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const users = body.users.rows;
+          expect(users[0]).toEqual({
+            username: "butter_bridge",
+            name: "jonny",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          });
+        });
+    });
+  });
 });
