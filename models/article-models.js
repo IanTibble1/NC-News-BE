@@ -16,6 +16,8 @@ const fetchAllArticles = ({
     "article_img_url",
     "comment_count",
   ];
+
+  const acceptedOrder = ["asc", "ASC", "desc", "DESC"];
   const queryValues = [];
 
   const orderToCaps = order.toUpperCase();
@@ -44,6 +46,13 @@ const fetchAllArticles = ({
 
   if (sort_by) {
     baseStr += ` ORDER BY ${sort_by}`;
+  }
+
+  if (!acceptedOrder.includes(order) && order !== undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "invalid order only accepts asc(ascending) or desc (descending)",
+    });
   }
 
   if (order) {

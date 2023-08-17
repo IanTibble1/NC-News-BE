@@ -533,6 +533,18 @@ describe("app()", () => {
             expect(articles).toBeSortedBy("created_at", { descending: true });
           });
       });
+
+      test("GET 400: should return a 400 status invalid order if invalid order queried", () => {
+        return request(app)
+          .get("/api/articles?order=hello")
+          .expect(400)
+          .then((data) => {
+            const { body } = data;
+            expect(body.msg).toBe(
+              "invalid order only accepts asc(ascending) or desc (descending)"
+            );
+          });
+      });
     });
   });
 });
