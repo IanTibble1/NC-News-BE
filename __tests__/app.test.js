@@ -116,8 +116,8 @@ describe("app()", () => {
         .get("/api/articles")
         .then((data) => {
           const { body } = data;
-          const articles = body.articles.rows;
-          expect(articles[0]).toMatchObject({
+          const articles = body.articles;
+          expect(articles[0]).toEqual({
             author: "icellusedkars",
             title: "Eight pug gifs that remind me of mitch",
             article_id: 3,
@@ -136,7 +136,7 @@ describe("app()", () => {
         .get("/api/articles")
         .then((data) => {
           const { body } = data;
-          const articles = body.articles.rows;
+          const articles = body.articles;
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
@@ -452,7 +452,7 @@ describe("app()", () => {
 
   describe("GET /api/articles(queries)", () => {
     describe("GET /api/articles?topic", () => {
-      test.only("GET 200: should return a 200 status and the articles filtered by topic specified", () => {
+      test("GET 200: should return a 200 status and the articles filtered by topic specified", () => {
         return request(app)
           .get("/api/articles?topic=mitch")
           .expect(200)
@@ -465,6 +465,16 @@ describe("app()", () => {
               expect(article.topic).not.toEqual("paper");
             });
             expect(articles).toHaveLength(12);
+          });
+      });
+
+      test("GET 400: should return a 400 status topic not valid if topic not valid", () => {
+        return request(app)
+          .get("/api/articles?topic=hello")
+          .expect(400)
+          .then((data) => {
+            const { body } = data;
+            expect(body.msg).toBe("not a valid topic");
           });
       });
     });

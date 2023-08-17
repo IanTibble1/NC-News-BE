@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 
 const fetchAllArticles = (topic) => {
+  const acceptedTopics = ["mitch", "cats", "paper"];
   const queryValues = [];
 
   let baseStr = `SELECT 
@@ -9,6 +10,10 @@ const fetchAllArticles = (topic) => {
   COUNT(comments.comment_id)::INT AS comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (!acceptedTopics.includes(topic) && topic !== undefined) {
+    return Promise.reject({ status: 400, msg: "not a valid topic" });
+  }
 
   if (topic) {
     baseStr += ` WHERE topic =$1`;
