@@ -1,13 +1,11 @@
-const {
-  checkIdExists,
-  checkUserNameExist,
-} = require("../models/article-parameters-exists-models");
+const { checkIdExists } = require("../models/article-id-models");
 
 const {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
   addComment,
+  updateVotes,
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
@@ -22,11 +20,7 @@ const getAllArticles = (request, response, next) => {
 
 const getArticle = (request, response, next) => {
   const { article_id } = request.params;
-
-  checkIdExists(article_id)
-    .then(() => {
-      return fetchArticle(article_id);
-    })
+  fetchArticle(article_id)
     .then((article) => {
       response.status(200).send({ articles: article });
     })
@@ -58,7 +52,7 @@ const postComment = (request, response, next) => {
   const { username } = request.body;
   const { article_id } = request.params;
   if (body === undefined || username === undefined) {
-    response.status(400).send({ msg: "missing required field" });
+    return response.status(400).send({ msg: "missing required field" });
   }
 
   Promise.all([checkIdExists(article_id), checkUserNameExist(username)])
@@ -73,9 +67,31 @@ const postComment = (request, response, next) => {
     });
 };
 
+const updateArticle = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_vote } = request.body;
+
+  if (inc_vote === undefined) {
+    return response.status(400).send({ msg: "required field missing" });
+  } else if (typeof inc_vote !== "number") {
+    return response.status(400).send({ msg: "votes should be a number" });
+  }
+
+  checkIdExists(article_id)
+    .then(() => {
+      updateVotes(article_id, inc_vote).then((updatedArticle) => {
+        response.status(200).send({ updatedArticle });
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getArticle,
   getAllArticles,
   getArticleComments,
   postComment,
+  updateArticle,
 };

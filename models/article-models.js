@@ -52,9 +52,26 @@ const addComment = (username, commentBody, article_id) => {
     });
 };
 
+const updateVotes = (article_id, inc_vote) => {
+  return db
+    .query(
+      `UPDATE articles
+  SET votes = CASE WHEN (votes + $1) < 0 THEN 0
+  ELSE votes + $1
+  END
+  WHERE article_id = $2
+  RETURNING *;`,
+      [inc_vote, article_id]
+    )
+    .then((updatedArticle) => {
+      return updatedArticle.rows[0];
+    });
+};
+
 module.exports = {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
   addComment,
+  updateVotes,
 };
