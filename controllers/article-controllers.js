@@ -4,6 +4,7 @@ const {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
+  updateVotes,
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
@@ -49,8 +50,30 @@ const getArticleComments = (request, response, next) => {
     });
 };
 
+const updateArticle = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_vote } = request.body;
+
+  if (inc_vote === undefined) {
+    return response.status(400).send({ msg: "required field missing" });
+  } else if (typeof inc_vote !== "number") {
+    return response.status(400).send({ msg: "votes should be a number" });
+  }
+
+  checkIdExists(article_id)
+    .then(() => {
+      updateVotes(article_id, inc_vote).then((updatedArticle) => {
+        response.status(200).send({ updatedArticle });
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getArticle,
   getAllArticles,
   getArticleComments,
+  updateArticle,
 };

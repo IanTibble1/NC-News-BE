@@ -6,13 +6,13 @@ const {
   getArticle,
   getAllArticles,
   getArticleComments,
+  updateArticle,
 } = require("./controllers/article-controllers");
 const {
   postComment,
   removeComment,
 } = require("./controllers/comment-controllers");
 app.use(express.json());
-
 app.get("/api/", getApi);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
@@ -20,6 +20,7 @@ app.get("/api/articles/:article_id", getArticle);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postComment);
 app.delete("/api/comments/:comment_id", removeComment);
+app.patch("/api/articles/:article_id", updateArticle);
 
 app.use((request, response, next) => {
   response.status(404).send({ msg: "No path found" });
