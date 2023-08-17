@@ -511,5 +511,28 @@ describe("app()", () => {
           });
       });
     });
+    describe("GET /api/articles?order", () => {
+      test("GET 200: should return a 200 status and order articles by ascending order", () => {
+        return request(app)
+          .get("/api/articles?order=asc")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("created_at", { ascending: true });
+          });
+      });
+
+      test("GET 200: should return a 200 status and order articles by descending order", () => {
+        return request(app)
+          .get("/api/articles?order=desc")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+    });
   });
 });

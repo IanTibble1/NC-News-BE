@@ -1,6 +1,10 @@
 const db = require("../db/connection");
 
-const fetchAllArticles = ({ topic, sort_by = "created_at" }) => {
+const fetchAllArticles = ({
+  topic,
+  sort_by = "created_at",
+  order = "DESC",
+}) => {
   const acceptedTopics = ["mitch", "cats", "paper"];
   const acceptedSortBy = [
     "author",
@@ -13,6 +17,8 @@ const fetchAllArticles = ({ topic, sort_by = "created_at" }) => {
     "comment_count",
   ];
   const queryValues = [];
+
+  const orderToCaps = order.toUpperCase();
 
   let baseStr = `SELECT 
   articles.author, articles.title, articles.article_id, articles.topic,
@@ -37,7 +43,11 @@ const fetchAllArticles = ({ topic, sort_by = "created_at" }) => {
   }
 
   if (sort_by) {
-    baseStr += ` ORDER BY ${sort_by} DESC`;
+    baseStr += ` ORDER BY ${sort_by}`;
+  }
+
+  if (order) {
+    baseStr += ` ${orderToCaps}`;
   }
 
   return db.query(baseStr, queryValues).then(({ rows }) => {
