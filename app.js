@@ -8,7 +8,7 @@ const {
   getArticleComments,
   postComment,
 } = require("./controllers/article-controllers");
-
+const { removeComment } = require("./controllers/comment-controllers");
 app.use(express.json());
 
 app.get("/api/", getApi);
@@ -17,6 +17,7 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticle);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postComment);
+app.delete("/api/comments/:comment_id", removeComment);
 
 app.use((request, response, next) => {
   response.status(404).send({ msg: "No path found" });
@@ -25,7 +26,7 @@ app.use((request, response, next) => {
 
 app.use((err, request, response, next) => {
   if (err.status === 404) {
-    response.status(404).send({ msg: "Not found" });
+    response.status(404).send(err);
   } else {
     next(err);
   }

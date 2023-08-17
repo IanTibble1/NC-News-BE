@@ -10,7 +10,10 @@ const checkIdExists = (article_id) => {
     )
     .then(({ rows }) => {
       if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "Not found" });
+        return Promise.reject({
+          status: 404,
+          msg: `article_id ${article_id} does not exist`,
+        });
       }
     });
 };
@@ -25,9 +28,30 @@ const checkUserNameExist = (username) => {
     )
     .then(({ rows }) => {
       if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "Not found" });
+        return Promise.reject({
+          status: 404,
+          msg: `username ${username} does not exist`,
+        });
       }
     });
 };
 
-module.exports = { checkIdExists, checkUserNameExist };
+const checkCommentIdExists = (comment_id) => {
+  return db
+    .query(
+      `SELECT *
+   FROM comments
+   WHERE comment_id = $1`,
+      [comment_id]
+    )
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `no comment with id ${comment_id} exists`,
+        });
+      }
+    });
+};
+
+module.exports = { checkIdExists, checkUserNameExist, checkCommentIdExists };

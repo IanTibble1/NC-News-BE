@@ -92,7 +92,7 @@ describe("app()", () => {
         .get("/api/articles/999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("article_id 999 does not exist");
         });
     });
 
@@ -190,7 +190,7 @@ describe("app()", () => {
         .get("/api/articles/999/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("article_id 999 does not exist");
         });
     });
 
@@ -286,11 +286,11 @@ describe("app()", () => {
         body: "I love this article",
       };
       return request(app)
-        .post("/api/articles/999/comments")
+        .post("/api/articles/1/comments")
         .send(newComment)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("username doesnt_exist does not exist");
         });
     });
 
@@ -304,7 +304,22 @@ describe("app()", () => {
         .send(newComment)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("article_id 999 does not exist");
+        });
+    });
+  });
+
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("DELETE 204: /api/comments/:comment_id should return a 204 status and no content", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+
+    test("DELETE 404: /api/comments/:comment_id should return a 404 No comment with id exists if comment id does not exist", () => {
+      return request(app)
+        .delete("/api/comments/999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("no comment with id 999 exists");
         });
     });
   });
