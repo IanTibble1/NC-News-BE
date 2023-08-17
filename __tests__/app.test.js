@@ -92,7 +92,7 @@ describe("app()", () => {
         .get("/api/articles/999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("article_id 999 does not exist");
         });
     });
 
@@ -180,7 +180,7 @@ describe("app()", () => {
         .get("/api/articles/999/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("article_id 999 does not exist");
         });
     });
 
@@ -190,6 +190,111 @@ describe("app()", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("bad request");
+        });
+    });
+  });
+
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("POST 201: /api/articles/:article_id/comments should return a 201 status code", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(201)
+        .then((data) => {
+          const { body } = data;
+          const comment = body.comments;
+          expect(comment).toMatchObject({
+            comment_id: 19,
+            body: "I love this article",
+            article_id: 3,
+            author: "butter_bridge",
+            votes: 0,
+            created_at: expect.any(String),
+          });
+        });
+    });
+
+    test("POST 201: /api/articles/:article_id/comments should return a 201 status code with additional request properties ignored", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+        extraProperty: "to be ignored",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(201)
+        .then((data) => {
+          const { body } = data;
+          const comment = body.comments;
+          expect(comment).toMatchObject({
+            comment_id: 20,
+            body: "I love this article",
+            article_id: 3,
+            author: "butter_bridge",
+            votes: 0,
+            created_at: expect.any(String),
+          });
+          expect(comment).not.toHaveProperty("extraProperty");
+        });
+    });
+
+    test("POST 400: /api/articles/:article_id/comments should return a 400 status code 'missing required field' if missing required fields", () => {
+      const newComment = {
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("missing required field");
+        });
+    });
+
+    test("POST 400: /api/articles/:article_id/comments should return a 400 'bad request' if id wrong datatype", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/hello/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+
+    test("POST 404: /api/articles/:article_id/comments should return a 404 'Not found' if username does not exist", () => {
+      const newComment = {
+        username: "doesnt_exist",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("username doesnt_exist does not exist");
+        });
+    });
+
+    test("POST 404: /api/articles/:article_id/comments should return a 404 'Not found' if no matching id", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I love this article",
+      };
+      return request(app)
+        .post("/api/articles/999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("article_id 999 does not exist");
         });
     });
   });
@@ -271,13 +376,13 @@ describe("app()", () => {
         .expect(404)
         .send(changeVotes)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("article_id 999 does not exist");
         });
     });
 
     test("PATCH 400: /api/articles/:article_id should return 400 required field missing if inc_vote missing", () => {
       return request(app)
-        .patch("/api/articles/999")
+        .patch("/api/articles/1")
         .expect(400)
         .send({})
         .then(({ body }) => {
@@ -293,6 +398,30 @@ describe("app()", () => {
         .send(changeVotes)
         .then(({ body }) => {
           expect(body.msg).toBe("votes should be a number");
+        });
+    });
+  });
+
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("DELETE 204: /api/comments/:comment_id should return a 204 status and no content", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+
+    test("DELETE 404: /api/comments/:comment_id should return a 404 No comment with id exists if comment id does not exist", () => {
+      return request(app)
+        .delete("/api/comments/999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("no comment with id 999 exists");
+        });
+    });
+
+    test("DELETE 400: /api/comments/:comment_id should return 404 bad request if id wrong datatype", () => {
+      return request(app)
+        .delete("/api/comments/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
         });
     });
   });
