@@ -449,4 +449,24 @@ describe("app()", () => {
         });
     });
   });
+
+  describe("GET /api/articles(queries)", () => {
+    describe("GET /api/articles?topic", () => {
+      test.only("GET 200: should return a 200 status and the articles filtered by topic specified", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            articles.forEach((article) => {
+              expect(article.topic).toEqual("mitch");
+              expect(article.topic).not.toEqual("cats");
+              expect(article.topic).not.toEqual("paper");
+            });
+            expect(articles).toHaveLength(12);
+          });
+      });
+    });
+  });
 });

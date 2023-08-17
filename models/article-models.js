@@ -1,14 +1,26 @@
 const db = require("../db/connection");
 
-const fetchAllArticles = () => {
-  return db.query(`SELECT 
+const fetchAllArticles = (topic) => {
+  const queryValues = [];
+
+  let baseStr = `SELECT 
   articles.author, articles.title, articles.article_id, articles.topic,
-  articles.created_at,articles.votes,articles.article_img_url, 
+  articles.created_at,articles.votes,articles.article_img_url,
   COUNT(comments.comment_id)::INT AS comment_count
   FROM articles
-  LEFT JOIN comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC`);
+  LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    baseStr += ` WHERE topic =$1`;
+    queryValues.push(topic);
+  }
+
+  baseStr += ` GROUP BY articles.article_id
+  ORDER BY articles.created_at DESC`;
+
+  return db.query(baseStr, queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
 
 const fetchArticle = (article_id) => {
