@@ -379,7 +379,7 @@ describe("app()", () => {
         });
     });
 
-    test("PATCH 404: /api/articles/:article_id should return 404 not found if no matching article_id ", () => {
+    test("PATCH 404: /api/articles/:article_id should return 404 not found if no matching article_id", () => {
       const changeVotes = { inc_vote: 1 };
       return request(app)
         .patch("/api/articles/999")
@@ -390,7 +390,7 @@ describe("app()", () => {
         });
     });
 
-    test("PATCH 400: /api/articles/:article_id should return 400 required field missing if inc_vote missing ", () => {
+    test("PATCH 400: /api/articles/:article_id should return 400 required field missing if inc_vote missing", () => {
       return request(app)
         .patch("/api/articles/999")
         .expect(400)
@@ -400,7 +400,7 @@ describe("app()", () => {
         });
     });
 
-    test("PATCH 400: /api/articles/:article_id should return 400 votes should be a number if inc_vote missing ", () => {
+    test("PATCH 400: /api/articles/:article_id should return 400 votes should be a number if inc_vote value is not a number", () => {
       const changeVotes = { inc_vote: "1" };
       return request(app)
         .patch("/api/articles/1")
