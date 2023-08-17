@@ -6,9 +6,11 @@ const {
   getArticle,
   getAllArticles,
   getArticleComments,
-  postComment,
 } = require("./controllers/article-controllers");
-const { removeComment } = require("./controllers/comment-controllers");
+const {
+  postComment,
+  removeComment,
+} = require("./controllers/comment-controllers");
 app.use(express.json());
 
 app.get("/api/", getApi);

@@ -40,21 +40,8 @@ const fetchArticleComments = (article_id) => {
   );
 };
 
-const addComment = (username, commentBody, article_id) => {
-  return db
-    .query(
-      `INSERT INTO comments(author, body, article_id)
-  VALUES ($1, $2, $3) RETURNING *;`,
-      [username, commentBody, article_id]
-    )
-    .then((comment) => {
-      return comment.rows[0];
-    });
-};
-
 module.exports = {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
-  addComment,
 };

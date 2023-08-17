@@ -322,5 +322,14 @@ describe("app()", () => {
           expect(body.msg).toBe("no comment with id 999 exists");
         });
     });
+
+    test("DELETE 400: /api/comments/:comment_id should return 404 bad request if id wrong datatype", () => {
+      return request(app)
+        .delete("/api/comments/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });

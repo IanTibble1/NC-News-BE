@@ -1,13 +1,9 @@
-const {
-  checkIdExists,
-  checkUserNameExist,
-} = require("../models/article-parameters-exists-models");
+const { checkIdExists } = require("../models/article-parameters-exists-models");
 
 const {
   fetchArticle,
   fetchAllArticles,
   fetchArticleComments,
-  addComment,
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
@@ -53,29 +49,8 @@ const getArticleComments = (request, response, next) => {
     });
 };
 
-const postComment = (request, response, next) => {
-  const { body } = request.body;
-  const { username } = request.body;
-  const { article_id } = request.params;
-  if (body === undefined || username === undefined) {
-    response.status(400).send({ msg: "missing required field" });
-  }
-
-  Promise.all([checkIdExists(article_id), checkUserNameExist(username)])
-    .then(() => {
-      return addComment(username, body, article_id);
-    })
-    .then((comments) => {
-      response.status(201).send({ comments });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
 module.exports = {
   getArticle,
   getAllArticles,
   getArticleComments,
-  postComment,
 };
