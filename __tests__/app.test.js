@@ -116,8 +116,8 @@ describe("app()", () => {
         .get("/api/articles")
         .then((data) => {
           const { body } = data;
-          const articles = body.articles.rows;
-          expect(articles[0]).toMatchObject({
+          const articles = body.articles;
+          expect(articles[0]).toEqual({
             author: "icellusedkars",
             title: "Eight pug gifs that remind me of mitch",
             article_id: 3,
@@ -136,7 +136,7 @@ describe("app()", () => {
         .get("/api/articles")
         .then((data) => {
           const { body } = data;
-          const articles = body.articles.rows;
+          const articles = body.articles;
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
@@ -448,5 +448,113 @@ describe("app()", () => {
           });
         });
     });
+  });
+
+  describe("GET /api/articles(queries)", () => {
+    describe("GET /api/articles?topic", () => {
+      test("GET 200: should return a 200 status and the articles filtered by topic specified", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            articles.forEach((article) => {
+              expect(article.topic).toEqual("mitch");
+              expect(article.topic).not.toEqual("cats");
+              expect(article.topic).not.toEqual("paper");
+            });
+            expect(articles).toHaveLength(12);
+          });
+      });
+
+      test("GET 404: should return a 404 status topic does not exist if not valid topic", () => {
+        return request(app)
+          .get("/api/articles?topic=hello")
+          .expect(404)
+          .then((data) => {
+            const { body } = data;
+            expect(body.msg).toBe("topic does not exist");
+          });
+      });
+    });
+    describe("GET /api/articles?sort_by", () => {
+      test("GET 200: should return a 200 status and articles sorted by query", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("title", { descending: true });
+          });
+      });
+
+      test("GET 200: sort_by query should work with different columns", () => {
+        return request(app)
+          .get("/api/articles?sort_by=author")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("author", { descending: true });
+          });
+      });
+
+      test("GET 400: should return a 400 status can't sort by that method if given non valid column", () => {
+        return request(app)
+          .get("/api/articles?sort_by=hello")
+          .expect(400)
+          .then((data) => {
+            const { body } = data;
+            expect(body.msg).toBe("can't sort by that method");
+          });
+      });
+    });
+    describe("GET /api/articles?order", () => {
+      test("GET 200: should return a 200 status and order articles by ascending order", () => {
+        return request(app)
+          .get("/api/articles?order=asc")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("created_at", { ascending: true });
+          });
+      });
+
+      test("GET 200: should return a 200 status and order articles by descending order", () => {
+        return request(app)
+          .get("/api/articles?order=desc")
+          .expect(200)
+          .then((data) => {
+            const { body } = data;
+            const articles = body.articles;
+            expect(articles).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+
+      test("GET 400: should return a 400 status invalid order if invalid order queried", () => {
+        return request(app)
+          .get("/api/articles?order=hello")
+          .expect(400)
+          .then((data) => {
+            const { body } = data;
+            expect(body.msg).toBe(
+              "invalid order only accepts asc(ascending) or desc (descending)"
+            );
+          });
+      });
+    });
+  });
+  test("GET 200: should return a 200 status and produce appropirate response when multiple queries chained", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then((data) => {
+        const { body } = data;
+        const articles = body.articles;
+        expect(articles).toBeSortedBy("author", { ascending: true });
+      });
   });
 });

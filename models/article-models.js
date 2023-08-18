@@ -1,14 +1,67 @@
 const db = require("../db/connection");
 
-const fetchAllArticles = () => {
-  return db.query(`SELECT 
+const fetchAllArticles = ({
+  topic,
+  sort_by = "created_at",
+  order = "DESC",
+}) => {
+  const acceptedTopics = ["mitch", "cats", "paper"];
+  const acceptedSortBy = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+
+  const acceptedOrder = ["asc", "ASC", "desc", "DESC"];
+  const queryValues = [];
+
+  const orderToCaps = order.toUpperCase();
+
+  let baseStr = `SELECT 
   articles.author, articles.title, articles.article_id, articles.topic,
-  articles.created_at,articles.votes,articles.article_img_url, 
+  articles.created_at,articles.votes,articles.article_img_url,
   COUNT(comments.comment_id)::INT AS comment_count
   FROM articles
-  LEFT JOIN comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC`);
+  LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (!acceptedTopics.includes(topic) && topic !== undefined) {
+    return Promise.reject({ status: 404, msg: "topic does not exist" });
+  }
+
+  if (topic) {
+    baseStr += ` WHERE topic =$1`;
+    queryValues.push(topic);
+  }
+
+  baseStr += ` GROUP BY articles.article_id`;
+
+  if (!acceptedSortBy.includes(sort_by) && sort_by !== undefined) {
+    return Promise.reject({ status: 400, msg: "can't sort by that method" });
+  }
+
+  if (sort_by) {
+    baseStr += ` ORDER BY ${sort_by}`;
+  }
+
+  if (!acceptedOrder.includes(order) && order !== undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "invalid order only accepts asc(ascending) or desc (descending)",
+    });
+  }
+
+  if (order) {
+    baseStr += ` ${orderToCaps}`;
+  }
+
+  return db.query(baseStr, queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
 
 const fetchArticle = (article_id) => {

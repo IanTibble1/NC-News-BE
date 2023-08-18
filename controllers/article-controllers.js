@@ -8,9 +8,11 @@ const {
 } = require("../models/article-models");
 
 const getAllArticles = (request, response, next) => {
-  fetchAllArticles()
+  const query = request.query;
+
+  fetchAllArticles(query)
     .then((articles) => {
-      response.status(200).send({ articles: articles });
+      response.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);
