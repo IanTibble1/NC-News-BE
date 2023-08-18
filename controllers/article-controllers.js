@@ -6,6 +6,7 @@ const {
   fetchArticleComments,
   updateVotes,
 } = require("../models/article-models");
+const articles = require("../db/data/test-data/articles");
 
 const getAllArticles = (request, response, next) => {
   const query = request.query;

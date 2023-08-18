@@ -546,15 +546,62 @@ describe("app()", () => {
           });
       });
     });
+    test("GET 200: should return a 200 status and produce appropirate response when multiple queries chained", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&order=asc")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const articles = body.articles;
+          expect(articles).toBeSortedBy("author", { ascending: true });
+        });
+    });
   });
-  test("GET 200: should return a 200 status and produce appropirate response when multiple queries chained", () => {
-    return request(app)
-      .get("/api/articles?sort_by=author&order=asc")
-      .expect(200)
-      .then((data) => {
-        const { body } = data;
-        const articles = body.articles;
-        expect(articles).toBeSortedBy("author", { ascending: true });
-      });
+
+  describe("GET /api/articles/:article_id comment_count feature", () => {
+    test("GET 200: should return 200 status and add comment_count feature to :article_id endpoint ", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const articles = body.articles;
+          expect(articles).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 11,
+          });
+        });
+    });
+
+    test("GET 200: should return comment count of 0 if no comments", () => {
+      return request(app)
+        .get("/api/articles/4")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const articles = body.articles;
+          console.log(articles);
+          expect(articles).toEqual({
+            article_id: 4,
+            title: "Student SUES Mitch!",
+            topic: "mitch",
+            author: "rogersop",
+            body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+            created_at: "2020-05-06T01:14:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 0,
+          });
+        });
+    });
   });
 });
