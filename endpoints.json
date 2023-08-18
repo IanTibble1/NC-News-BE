@@ -10,8 +10,17 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET /api/users": { "description": "serves an array of all users" },
-
+  "GET /api/users": {
+    "description": "serves an array of all users"
+  },
+  "GET /api/users/:username": {
+    "description": "serves a user object based on username entered",
+    "exampleResponse": {
+      "username": "icellusedkars",
+      "name": "sam",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "queries": ["topic", "sort_by", "order"],
