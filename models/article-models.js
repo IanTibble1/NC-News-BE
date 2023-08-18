@@ -5,7 +5,14 @@ const fetchAllArticles = ({
   sort_by = "created_at",
   order = "DESC",
 }) => {
-  const acceptedTopics = ["mitch", "cats", "paper"];
+  const acceptedTopics = [
+    "mitch",
+    "cats",
+    "paper",
+    "football",
+    "coding",
+    "cooking",
+  ];
   const acceptedSortBy = [
     "author",
     "title",

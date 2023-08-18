@@ -147,7 +147,7 @@ describe("app()", () => {
       return request(app).get("/api/articles/1/comments").expect(200);
     });
 
-    test.only("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
+    test("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
       return request(app)
         .get("/api/articles/6/comments")
         .then((data) => {
@@ -577,7 +577,6 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           const articles = body.articles;
-          console.log(articles);
           expect(articles.comment_count).toEqual(0);
         });
     });
