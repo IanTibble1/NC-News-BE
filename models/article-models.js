@@ -30,7 +30,7 @@ const fetchAllArticles = ({
   LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
   if (!acceptedTopics.includes(topic) && topic !== undefined) {
-    return Promise.reject({ status: 400, msg: "not a valid topic" });
+    return Promise.reject({ status: 404, msg: "topic does not exist" });
   }
 
   if (topic) {

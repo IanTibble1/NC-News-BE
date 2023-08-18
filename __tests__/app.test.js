@@ -468,13 +468,13 @@ describe("app()", () => {
           });
       });
 
-      test("GET 400: should return a 400 status topic not valid if topic not valid", () => {
+      test("GET 404: should return a 404 status topic does not exist if not valid topic", () => {
         return request(app)
           .get("/api/articles?topic=hello")
-          .expect(400)
+          .expect(404)
           .then((data) => {
             const { body } = data;
-            expect(body.msg).toBe("not a valid topic");
+            expect(body.msg).toBe("topic does not exist");
           });
       });
     });
@@ -546,5 +546,15 @@ describe("app()", () => {
           });
       });
     });
+  });
+  test("GET 200: should return a 200 status and produce appropirate response when multiple queries chained", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then((data) => {
+        const { body } = data;
+        const articles = body.articles;
+        expect(articles).toBeSortedBy("author", { ascending: true });
+      });
   });
 });
