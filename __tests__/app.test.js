@@ -147,12 +147,12 @@ describe("app()", () => {
       return request(app).get("/api/articles/1/comments").expect(200);
     });
 
-    test("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
+    test.only("GET 200: /api/articles/:article_id/comments should be sorted return an array of comments for the given id ", () => {
       return request(app)
         .get("/api/articles/6/comments")
         .then((data) => {
           const { body } = data;
-          const comments = body.comments.rows;
+          const comments = body.comments;
           expect(comments).toMatchObject([
             {
               comment_id: 16,
@@ -171,7 +171,7 @@ describe("app()", () => {
         .get("/api/articles/2/comments")
         .then((data) => {
           const { body } = data;
-          const comments = body.comments.rows;
+          const comments = body.comments;
           expect(comments).toEqual([]);
         });
     });
