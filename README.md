@@ -44,7 +44,7 @@ The local database can be set up with the terminal command "npm run setup-dbs"
 
 Local databases can be seeded using the terminal command "npm run seed"
 
-**<u>Starting the server<</u>>**
+**<u>Starting the server</u>**
 
 The server can be started with the terminal command "npm start"
 
