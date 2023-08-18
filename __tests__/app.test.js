@@ -425,7 +425,7 @@ describe("app()", () => {
     });
   });
 
-  describe("GET 200: /api/users should return 200", () => {
+  describe("GET: /api/users", () => {
     test("GET 200: /api/users should return a 200 status and an array of user objects with the appropriate properties", () => {
       return request(app)
         .get("/api/users")
@@ -605,6 +605,48 @@ describe("app()", () => {
         .then((data) => {
           const { body } = data;
           expect(body.msg).toBe("username doesnt_exist does not exist");
+        });
+    });
+  });
+
+  describe("PATCH /api/comments/:comment_id", () => {
+    test("PATCH 200: /api/comments/:comment_id should return a comment with votes increased by specified amount", () => {
+      const changeVotes = { inc_vote: 2 };
+      return request(app)
+        .patch("/api/comments/3")
+        .expect(200)
+        .send(changeVotes)
+        .then((data) => {
+          const { body } = data;
+          const updatedComment = body.updatedComment;
+          expect(updatedComment).toEqual({
+            comment_id: 3,
+            body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+            article_id: 1,
+            author: "icellusedkars",
+            votes: 102,
+            created_at: "2020-03-01T01:13:00.000Z",
+          });
+        });
+    });
+
+    test("PATCH 200: /api/comments/:comment_id should return a comment with votes decreased by specified amount", () => {
+      const changeVotes = { inc_vote: -10 };
+      return request(app)
+        .patch("/api/comments/3")
+        .expect(200)
+        .send(changeVotes)
+        .then((data) => {
+          const { body } = data;
+          const updatedComment = body.updatedComment;
+          expect(updatedComment).toEqual({
+            comment_id: 3,
+            body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+            article_id: 1,
+            author: "icellusedkars",
+            votes: 92,
+            created_at: "2020-03-01T01:13:00.000Z",
+          });
         });
     });
   });

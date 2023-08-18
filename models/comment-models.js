@@ -20,4 +20,20 @@ const deleteComment = (comment_id) => {
   );
 };
 
-module.exports = { deleteComment, addComment };
+const updateCommentVotes = (inc_vote, comment_id) => {
+  return db
+    .query(
+      `UPDATE comments
+        SET votes = CASE WHEN (votes + $1) < 0 THEN 0
+        ELSE votes + $1
+        END
+        WHERE comment_id = $2
+        RETURNING *;`,
+      [inc_vote, comment_id]
+    )
+    .then((updatedComment) => {
+      return updatedComment.rows[0];
+    });
+};
+
+module.exports = { deleteComment, addComment, updateCommentVotes };
