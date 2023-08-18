@@ -47,6 +47,13 @@ const removeComment = (request, response, next) => {
 const updateComment = (request, response, next) => {
   const { comment_id } = request.params;
   const { inc_vote } = request.body;
+
+  if (inc_vote === undefined) {
+    return response.status(400).send({ msg: "required field missing" });
+  } else if (typeof inc_vote !== "number") {
+    return response.status(400).send({ msg: "votes should be a number" });
+  }
+
   checkCommentIdExists(comment_id)
     .then(() => {
       updateCommentVotes(inc_vote, comment_id).then((updatedComment) => {

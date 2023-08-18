@@ -649,5 +649,37 @@ describe("app()", () => {
           });
         });
     });
+
+    test("PATCH 404: /api/articles/:comment_id should return 404 no comment exists if no matching comment_id", () => {
+      const changeVotes = { inc_vote: 1 };
+      return request(app)
+        .patch("/api/comments/999")
+        .expect(404)
+        .send(changeVotes)
+        .then(({ body }) => {
+          expect(body.msg).toBe("no comment with id 999 exists");
+        });
+    });
+
+    test("PATCH 400: /api/comments/:comment_id should return 400 required field missing if inc_vote missing", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .expect(400)
+        .send({})
+        .then(({ body }) => {
+          expect(body.msg).toBe("required field missing");
+        });
+    });
+
+    test("PATCH 400: /api/comments/:comment_id should return 400 votes should be a number if inc_vote value is not a number", () => {
+      const changeVotes = { inc_vote: "1" };
+      return request(app)
+        .patch("/api/comments/1")
+        .expect(400)
+        .send(changeVotes)
+        .then(({ body }) => {
+          expect(body.msg).toBe("votes should be a number");
+        });
+    });
   });
 });
