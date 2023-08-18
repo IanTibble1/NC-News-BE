@@ -433,7 +433,7 @@ describe("app()", () => {
         .expect(200)
         .then((data) => {
           const { body } = data;
-          const users = body.users.rows;
+          const users = body.users;
           expect(users[0]).toEqual({
             username: "butter_bridge",
             name: "jonny",
