@@ -11,4 +11,17 @@ const fetchUsers = () => {
     });
 };
 
-module.exports = { fetchUsers };
+const fetchUser = (username) => {
+  return db
+    .query(
+      `SELECT username, name, avatar_url
+  FROM users
+  WHERE username = $1`,
+      [username]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+module.exports = { fetchUsers, fetchUser };

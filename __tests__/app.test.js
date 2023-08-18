@@ -4,7 +4,6 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const apiList = require("../endpoints.json");
-const articles = require("../db/data/test-data/articles");
 
 afterAll(() => {
   return db.end();
@@ -578,6 +577,34 @@ describe("app()", () => {
           const { body } = data;
           const articles = body.articles;
           expect(articles.comment_count).toEqual(0);
+        });
+    });
+  });
+
+  describe("GET /api/users/:username", () => {
+    test("GET 200: should return 200 status and a user object to match username specified", () => {
+      return request(app)
+        .get("/api/users/icellusedkars")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const user = body.username;
+          expect(user).toEqual({
+            username: "icellusedkars",
+            name: "sam",
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+          });
+        });
+    });
+
+    test("GET 404: should return a 404 status user doesn't exist if username does not exist", () => {
+      return request(app)
+        .get("/api/users/doesnt_exist")
+        .expect(404)
+        .then((data) => {
+          const { body } = data;
+          expect(body.msg).toBe("username doesnt_exist does not exist");
         });
     });
   });
