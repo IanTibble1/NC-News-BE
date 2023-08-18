@@ -580,5 +580,28 @@ describe("app()", () => {
           });
         });
     });
+
+    test("GET 200: should return comment count of 0 if no comments", () => {
+      return request(app)
+        .get("/api/articles/4")
+        .expect(200)
+        .then((data) => {
+          const { body } = data;
+          const articles = body.articles;
+          console.log(articles);
+          expect(articles).toEqual({
+            article_id: 4,
+            title: "Student SUES Mitch!",
+            topic: "mitch",
+            author: "rogersop",
+            body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+            created_at: "2020-05-06T01:14:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 0,
+          });
+        });
+    });
   });
 });
