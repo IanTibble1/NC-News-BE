@@ -1,4 +1,6 @@
+const cors = require("cors");
 const express = require("express");
+app.use(cors());
 const app = express();
 
 const articlesRouter = require("./routers/articles-router");
