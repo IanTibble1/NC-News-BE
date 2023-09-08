@@ -12,7 +12,7 @@ const checkIdExists = (article_id) => {
       if (!rows.length) {
         return Promise.reject({
           status: 404,
-          msg: `Article_id ${article_id} does not exist`,
+          msg: `Article does not exist`,
         });
       }
     });

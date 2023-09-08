@@ -93,7 +93,7 @@ describe("app()", () => {
         .get("/api/articles/999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Article_id 999 does not exist");
+          expect(body.msg).toBe("Article does not exist");
         });
     });
 
@@ -181,7 +181,7 @@ describe("app()", () => {
         .get("/api/articles/999/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Article_id 999 does not exist");
+          expect(body.msg).toBe("Article does not exist");
         });
     });
 
@@ -295,7 +295,7 @@ describe("app()", () => {
         .send(newComment)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Article_id 999 does not exist");
+          expect(body.msg).toBe("Article does not exist");
         });
     });
   });
@@ -377,7 +377,7 @@ describe("app()", () => {
         .expect(404)
         .send(changeVotes)
         .then(({ body }) => {
-          expect(body.msg).toBe("Article_id 999 does not exist");
+          expect(body.msg).toBe("Article does not exist");
         });
     });
 
