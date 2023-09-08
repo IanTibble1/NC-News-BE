@@ -12,7 +12,7 @@ const checkIdExists = (article_id) => {
       if (!rows.length) {
         return Promise.reject({
           status: 404,
-          msg: `article_id ${article_id} does not exist`,
+          msg: `Article_id ${article_id} does not exist`,
         });
       }
     });
@@ -30,7 +30,7 @@ const checkUserNameExist = (username) => {
       if (!rows.length) {
         return Promise.reject({
           status: 404,
-          msg: `username ${username} does not exist`,
+          msg: `Username ${username} does not exist`,
         });
       }
     });
@@ -48,7 +48,7 @@ const checkCommentIdExists = (comment_id) => {
       if (rowCount === 0) {
         return Promise.reject({
           status: 404,
-          msg: `no comment with id ${comment_id} exists`,
+          msg: `No comment with id ${comment_id} exists`,
         });
       }
     });

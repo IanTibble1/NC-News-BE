@@ -93,7 +93,7 @@ describe("app()", () => {
         .get("/api/articles/999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("article_id 999 does not exist");
+          expect(body.msg).toBe("Article_id 999 does not exist");
         });
     });
 
@@ -181,7 +181,7 @@ describe("app()", () => {
         .get("/api/articles/999/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("article_id 999 does not exist");
+          expect(body.msg).toBe("Article_id 999 does not exist");
         });
     });
 
@@ -281,7 +281,7 @@ describe("app()", () => {
         .send(newComment)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("username doesnt_exist does not exist");
+          expect(body.msg).toBe("Username doesnt_exist does not exist");
         });
     });
 
@@ -295,7 +295,7 @@ describe("app()", () => {
         .send(newComment)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("article_id 999 does not exist");
+          expect(body.msg).toBe("Article_id 999 does not exist");
         });
     });
   });
@@ -377,7 +377,7 @@ describe("app()", () => {
         .expect(404)
         .send(changeVotes)
         .then(({ body }) => {
-          expect(body.msg).toBe("article_id 999 does not exist");
+          expect(body.msg).toBe("Article_id 999 does not exist");
         });
     });
 
@@ -413,7 +413,7 @@ describe("app()", () => {
         .delete("/api/comments/999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("no comment with id 999 exists");
+          expect(body.msg).toBe("No comment with id 999 exists");
         });
     });
 
@@ -606,7 +606,7 @@ describe("app()", () => {
         .expect(404)
         .then((data) => {
           const { body } = data;
-          expect(body.msg).toBe("username doesnt_exist does not exist");
+          expect(body.msg).toBe("Username doesnt_exist does not exist");
         });
     });
   });
@@ -659,7 +659,7 @@ describe("app()", () => {
         .expect(404)
         .send(changeVotes)
         .then(({ body }) => {
-          expect(body.msg).toBe("no comment with id 999 exists");
+          expect(body.msg).toBe("No comment with id 999 exists");
         });
     });
 
