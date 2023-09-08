@@ -5,7 +5,7 @@
 This project is a mock version of a backend API for a News application that aims to mimic the backend serivces that typically provide information
 to front end architecture.
 
-The hosted version of this project can be visited here: https://news-server-1ny4.onrender.com/
+The hosted version of this project can be visited here: https://news-server-1ny4.onrender.com/api/
 
 The repo for this project is available at: https://github.com/IanTibble1/my-nc-news
 
